@@ -17,9 +17,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-file_name = "0831_3_2"
+file_name = "0831_4_1"
 
-file = xw.Book("/Volumes/jack32/motion_analysis/"+file_name+"/"+file_name+".xlsx")
+file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+".xlsx")
 
 
 # sht = file.sheets[0]
@@ -32,20 +32,27 @@ file = xw.Book("/Volumes/jack32/motion_analysis/"+file_name+"/"+file_name+".xlsx
 # rng = sht['a1:a5']
 # rng = sht[:5,0]
 
-nrows = file.sheets[3]["a1"].expand("table").rows.count - 2
-#nrows = 126
-ch
-data = file.sheets["data"]
-side_wt = np.array(data[f""+chr(96+1)+"3":chr(96+2)+str(nrows+2)].value)  # wingtip
-side_wb = np.array(data[f""+chr(96+3)+"3":chr(96+4)+str(nrows+2)].value)  # wingbase
-side_te = np.array(data[f""+chr(96+5)+"3":chr(96+6)+str(nrows+2)].value)  # hindwing trailing edge
-side_tail = np.array(data[f""+chr(96+7)+"3":chr(96+8)+str(nrows+2)].value)
+nrows = file.sheets[2]["a1"].expand("table").rows.count - 2
 
-top_wt = np.array(data[f""+chr(96+9)+"3":chr(96+10)+str(nrows+2)].value)  # wingtip
-top_wb = np.array(data[f""+chr(96+11)+"3":chr(96+12)+str(nrows+2)].value)  # wingbase
-top_te = np.array(data[f""+chr(96+13)+"3":chr(96+14)+str(nrows+2)].value)  # hindwing trailing edge
-top_tail = np.array(data[f""+chr(96+15)+"3":chr(96+16)+str(nrows+2)].value)
-print("finnish colecting data")
+s = 2180/800 #to sincronize x of top(x:1280,y:800) and side(x:800,y:600)
+
+
+data = file.sheets["data"]
+side_wb = np.array(data[f""+chr(96+1)+"3:"+chr(96+2)+str(nrows+2)].value)  # wingbase
+side_wt = np.array(data[f""+chr(96+3)+"3:"+chr(96+4)+str(nrows+2)].value)  # wingtip
+side_te = np.array(data[f""+chr(96+5)+"3:"+chr(96+6)+str(nrows+2 )].value)  # hindwing trailing edge
+side_tail = np.array(data[f""+chr(96+7)+"3:"+chr(96+8)+str(nrows+2)].value)
+
+top_wb = np.array(data[f""+chr(96+9)+"3:"+chr(96+10)+str(nrows+2)].value)*s  # wingbase
+top_wt = np.array(data[f""+chr(96+11)+"3:"+chr(96+12)+str(nrows+2)].value)*s  # wingtip
+top_te = np.array(data[f""+chr(96+13)+"3:"+chr(96+14)+str(nrows+2)].value)*s  # hindwing trailing edge
+top_tail = np.array(data[f""+chr(96+15)+"3:"+chr(96+16)+str(nrows+2)].value)*s
+print("finnish colecting data and multiply top with 2180/800")
+#multiply top with 2180/800
+
+
+
+
 head = []
 tail= []
 wb = []
