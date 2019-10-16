@@ -17,7 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-file_name = "0831_4_1"
+file_name = "0831_3_2"
 
 file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+".xlsx")
 
