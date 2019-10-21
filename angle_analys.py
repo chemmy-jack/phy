@@ -2,7 +2,7 @@
 """
 Spyder Editor
 
-This is a temporary script file.
+This is a temporary script fil.
 """
 
 # -*- coding: utf-8 -*-
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 file_name = "0902_15_5"
 
-file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+"(unit_cm).xlsx")
+fil = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+"(unit_cm).xlsx")
 
 
 # sht = file.sheets[0]
@@ -32,12 +32,12 @@ file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name
 # rng = sht['a1:a5']
 # rng = sht[:5,0]
 
-nrows = file.sheets[2]["a1"].expand("table").rows.count - 2
+nrows = fil.sheets[2]["a1"].expand("table").rows.count - 2
 
 # s = 2180/800 #to sincronize x of top(x:1280,y:800) and side(x:800,y:600)
 
 
-data = file.sheets["data"]
+data = fil.sheets["data"]
 side_wb = np.array(data[f""+chr(96+1)+"3:"+chr(96+2)+str(nrows+2)].value)  # wingbase
 side_wt = np.array(data[f""+chr(96+3)+"3:"+chr(96+4)+str(nrows+2)].value)  # wingtip
 side_te = np.array(data[f""+chr(96+5)+"3:"+chr(96+6)+str(nrows+2 )].value)  # hindwing trailing edge
@@ -137,11 +137,11 @@ print("2/2")
 
 #create angle sheet
 try :
-    print(file.sheets["angle"])
+    print(fil.sheets["angle"])
 except :
-    file.sheets.add(name="angle",after=-1)
-    print(file.sheets["angle"])
-angle = file.sheets["angle"]
+    filsheets.add(name="angle",after=-1)
+    print(fil.sheets["angle"])
+angle = fil.sheets["angle"]
 #create number
 for i in range(1,nrows+1):
     angle["a"+str(i+1)].value = str(i)
