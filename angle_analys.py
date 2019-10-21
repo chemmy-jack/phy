@@ -17,9 +17,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-file_name = "0831_3_2"
+file_name = "0902_15_5"
 
-file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+".xlsx")
+file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+"(unit_cm).xlsx")
 
 
 # sht = file.sheets[0]
@@ -34,7 +34,7 @@ file = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name
 
 nrows = file.sheets[2]["a1"].expand("table").rows.count - 2
 
-s = 2180/800 #to sincronize x of top(x:1280,y:800) and side(x:800,y:600)
+# s = 2180/800 #to sincronize x of top(x:1280,y:800) and side(x:800,y:600)
 
 
 data = file.sheets["data"]
@@ -43,11 +43,11 @@ side_wt = np.array(data[f""+chr(96+3)+"3:"+chr(96+4)+str(nrows+2)].value)  # win
 side_te = np.array(data[f""+chr(96+5)+"3:"+chr(96+6)+str(nrows+2 )].value)  # hindwing trailing edge
 side_tail = np.array(data[f""+chr(96+7)+"3:"+chr(96+8)+str(nrows+2)].value)
 
-top_wb = np.array(data[f""+chr(96+9)+"3:"+chr(96+10)+str(nrows+2)].value)*s  # wingbase
-top_wt = np.array(data[f""+chr(96+11)+"3:"+chr(96+12)+str(nrows+2)].value)*s  # wingtip
-top_te = np.array(data[f""+chr(96+13)+"3:"+chr(96+14)+str(nrows+2)].value)*s  # hindwing trailing edge
-top_tail = np.array(data[f""+chr(96+15)+"3:"+chr(96+16)+str(nrows+2)].value)*s
-print("finnish colecting data and multiply top with 2180/800")
+top_wb = np.array(data[f""+chr(96+9)+"3:"+chr(96+10)+str(nrows+2)].value)  # wingbase
+top_wt = np.array(data[f""+chr(96+11)+"3:"+chr(96+12)+str(nrows+2)].value)  # wingtip
+top_te = np.array(data[f""+chr(96+13)+"3:"+chr(96+14)+str(nrows+2)].value)  # hindwing trailing edge
+top_tail = np.array(data[f""+chr(96+15)+"3:"+chr(96+16)+str(nrows+2)].value)
+# print("finnish colecting data and multiply top with 2180/800")
 #multiply top with 2180/800
 
 
@@ -65,7 +65,7 @@ top_offset = [top_wb[0][0],top_wb[0][1]]
 
 
 for i in range(nrows):
-    for j in range(2):
+    for j in range(2): #以第一個wingbase為坐標原點
        # side_head[i][j] -= side_offset[j]
         side_wt[i][j] -= side_offset[j]
         side_wb[i][j] -= side_offset[j]
@@ -78,7 +78,7 @@ for i in range(nrows):
         top_te[i][j] -= top_offset[j]      
         top_tail[i][j] -= top_offset[j]
 
-
+    #整合top & side
     #head.append( [-(side_head[i][0] + top_head[i][0]) / 2, -side_head[i][1], -top_head[i][1]])
     wb.append( [-(side_wb[i][0] + top_wb[i][0]) / 2, -side_wb[i][1], -top_wb[i][1]])
     wt.append( [-(side_wt[i][0] + top_wt[i][0]) / 2, -side_wt[i][1], -top_wt[i][1]])
@@ -92,9 +92,9 @@ te = np.array(te)
 tail = np.array(tail)
 
 
-body_vector = wb - tail
-le_vector = wt - wb
-hind_te_vector = te - wb
+body_vector = wb - tail #body vector
+le_vector = wt - wb #vector wing-base to wing-tip 
+hind_te_vector = te - wb #vector trailing edge to wing-base
 
 sweeping_angle = []
 pitching_angle = []
@@ -102,16 +102,20 @@ flapping_angle = []
 
 
 for i in range(nrows):
-
-    wingplane_normal_vector = np.cross(le_vector[i], hind_te_vector[i])
-    sw_base_vector = np.cross(wingplane_normal_vector, body_vector[i])
-    len_sw_base = np.sqrt(np.dot(sw_base_vector, sw_base_vector))
-    len_le = np.sqrt(np.dot(le_vector[i], le_vector[i]))
-    sw_temp = np.arccos(np.dot(sw_base_vector, le_vector[i]) / (len_sw_base * len_le)) * 180 / np.pi
+    #calculate sweeping angle
+    wingplane_normal_vector = np.cross(le_vector[i], hind_te_vector[i]) #翅膀面法向量
+    sw_base_vector = np.cross(wingplane_normal_vector, body_vector[i]) #翅膀面法向量外積身體向量
+    len_sw_base = np.sqrt(np.dot(sw_base_vector, sw_base_vector)) #lenth of 翅膀面法向量外積身體向量
+    len_le = np.sqrt(np.dot(le_vector[i], le_vector[i])) #lenth of vector wing-base to wing-tip
+    sw_temp = np.arccos(np.dot(sw_base_vector, le_vector[i]) / (len_sw_base * len_le)) * 180 / np.pi #算角度
     sweeping_angle.append(sw_temp)
 
+    
+    #calculate pitching angle
     pitching_angle.append(np.arctan(body_vector[i][1] / body_vector[i][0]) * 180 / np.pi)
 
+
+    #calculate flapping angle
     body_right_temp_x = body_vector[i][2] * np.sqrt(body_vector[i][0] ** 2 + body_vector[i][2] ** 2)
     body_right_temp_z = -body_vector[i][0] * np.sqrt(body_vector[i][0] ** 2 + body_vector[i][2] ** 2)
     # body_right_vector = np.array([body_right_temp_x,wb[i][1],body_right_temp_z])
