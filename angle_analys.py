@@ -17,9 +17,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-file_name = "0902_15_5"
+file_name = "0322 2_25V_uf"
 
-fil = xw.Book("/Volumes/jack32/physic/motion_analysis/"+file_name+"/"+file_name+"(unit_cm).xlsx")
+fil = xw.Book("/Volumes/JACK16/motion_analysis/0322 excel/"+file_name+".xlsx")
 
 
 # sht = file.sheets[0]
@@ -139,7 +139,7 @@ print("2/2")
 try :
     print(fil.sheets["angle"])
 except :
-    filsheets.add(name="angle",after=-1)
+    fil.sheets.add(name="angle",after=-1)
     print(fil.sheets["angle"])
 angle = fil.sheets["angle"]
 #create number
