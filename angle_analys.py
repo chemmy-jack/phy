@@ -15,7 +15,7 @@ Created on Sat Aug 10 23:21:55 2019
 import xlwings as xw
 import numpy as np
 import matplotlib.pyplot as plt
-
+from numpy import linalg as LA
 
 file_name = "0322 2_25V_uf"
 
@@ -97,7 +97,7 @@ le_vector = wt - wb #vector wing-base to wing-tip
 hind_te_vector = te - wb #vector trailing edge to wing-base
 
 sweeping_angle = []
-pitching_angle = []
+abdomen_angle = []
 flapping_angle = []
 
 
@@ -105,22 +105,23 @@ for i in range(nrows):
     #calculate sweeping angle
     wingplane_normal_vector = np.cross(le_vector[i], hind_te_vector[i]) #翅膀面法向量
     sw_base_vector = np.cross(wingplane_normal_vector, body_vector[i]) #翅膀面法向量外積身體向量
-    len_sw_base = np.sqrt(np.dot(sw_base_vector, sw_base_vector)) #lenth of 翅膀面法向量外積身體向量
-    len_le = np.sqrt(np.dot(le_vector[i], le_vector[i])) #lenth of vector wing-base to wing-tip
+    len_sw_base = LA.norm(sw_base_vector) #lenth of 翅膀面法向量外積身體向量
+    len_le = LA.norm(le_vector[i]) #lenth of vector wing-base to wing-tip
     sw_temp = np.arccos(np.dot(sw_base_vector, le_vector[i]) / (len_sw_base * len_le)) * 180 / np.pi #算角度
     sweeping_angle.append(sw_temp)
 
     
-    #calculate pitching angle
-    pitching_angle.append(np.arctan(body_vector[i][1] / body_vector[i][0]) * 180 / np.pi)
+    #calculate abdomen angle
+    abdomen_angle.append(np.arctan(body_vector[i][1] / body_vector[i][0]) * 180 / np.pi)
 
 
     #calculate flapping angle
-    body_right_temp_x = body_vector[i][2] * np.sqrt(body_vector[i][0] ** 2 + body_vector[i][2] ** 2)
-    body_right_temp_z = -body_vector[i][0] * np.sqrt(body_vector[i][0] ** 2 + body_vector[i][2] ** 2)
+        # calculate vector
+    len_body_vector = np.sqrt(body_vector[i][0] ** 2 + body_vector[i][2] ** 2)
+    body_right_temp_x = body_vector[i][2] * len_body_vector
+    body_right_temp_z = -body_vector[i][0] * len_body_vector
     # body_right_vector = np.array([body_right_temp_x,wb[i][1],body_right_temp_z])
     body_right_vector = np.array([body_right_temp_x, 0, body_right_temp_z])
-
     len_body_right = np.sqrt(np.dot(body_right_vector, body_right_vector))
 
     flap_temp = np.dot(sw_base_vector, body_right_vector) / (len_sw_base * len_body_right)
@@ -151,11 +152,11 @@ angle["b"+str(1)].value = "flapping angle"
 for i in range(1,nrows+1):
     angle["b"+str(i+1)].value = str(flapping_angle[i-1])
 print("flapping angle sheet finnished")
-# pitching_angle 
-angle["c"+str(1)].value = "pitching angle"
+# abdomen_angle 
+angle["c"+str(1)].value = "abdomen angle"
 for i in range(1,nrows+1):
-    angle["c"+str(i+1)].value = str(pitching_angle[i-1])
-print("pitching angle sheet finnished")
+    angle["c"+str(i+1)].value = str(abdomen_angle[i-1])
+print("abdomen angle sheet finnished")
 # sweeping_angle 
 angle["d"+str(1)].value = "sweeping angle"
 for i in range(1,nrows+1):
@@ -165,7 +166,7 @@ print("sweeping angle sheet finnished")
 
 
 temp = np.arange(0, nrows)
-plt.plot(temp, pitching_angle,label = "pitching")
+plt.plot(temp, abdomen_angle,label = "abdomen")
 plt.plot(temp, flapping_angle,label = "flapping")
 plt.plot(temp,sweeping_angle,label = "sweeping")
 plt.legend()
