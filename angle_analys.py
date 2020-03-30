@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
-
-This is a temporary script fil.
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Sat Aug 10 23:21:55 2019
 
 @author: User
@@ -17,9 +10,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy import linalg as LA
 
-file_name = "0322 2_25V_uf"
+file_name = "0322 3_20V_uf"
 
-fil = xw.Book("/Volumes/JACK16/motion_analysis/0322 excel/"+file_name+".xlsx")
+fil = xw.Book("/Volumes/JACK4/"+file_name+".xlsx")
 
 
 # sht = file.sheets[0]
@@ -34,13 +27,10 @@ fil = xw.Book("/Volumes/JACK16/motion_analysis/0322 excel/"+file_name+".xlsx")
 
 nrows = fil.sheets[2]["a1"].expand("table").rows.count - 2
 
-# s = 2180/800 #to sincronize x of top(x:1280,y:800) and side(x:800,y:600)
-
-
 data = fil.sheets["data"]
 side_wb = np.array(data[f""+chr(96+1)+"3:"+chr(96+2)+str(nrows+2)].value)  # wingbase
 side_wt = np.array(data[f""+chr(96+3)+"3:"+chr(96+4)+str(nrows+2)].value)  # wingtip
-side_te = np.array(data[f""+chr(96+5)+"3:"+chr(96+6)+str(nrows+2 )].value)  # hindwing trailing edge
+side_te = np.array(data[f""+chr(96+5)+"3:"+chr(96+6)+str(nrows+2)].value)  # hindwing trailing edge
 side_tail = np.array(data[f""+chr(96+7)+"3:"+chr(96+8)+str(nrows+2)].value)
 
 top_wb = np.array(data[f""+chr(96+9)+"3:"+chr(96+10)+str(nrows+2)].value)  # wingbase
@@ -124,13 +114,14 @@ for i in range(nrows):
     body_right_vector = np.array([body_right_temp_x, 0, body_right_temp_z])
     len_body_right = np.sqrt(np.dot(body_right_vector, body_right_vector))
 
-    flap_temp = np.dot(sw_base_vector, body_right_vector) / (len_sw_base * len_body_right)
+    #flap_cos = np.dot(sw_base_vector, body_right_vector) / (len_sw_base * len_body_right)
+    flap_sin = LA.norm(np.cross(sw_base_vector, body_right_vector)) / (len_sw_base * len_body_right)
     #flap_temp = np.dot(sw_base_vector, [0, 0, -1]) / (len_sw_base)
 
     if sw_base_vector[1] > 0:
-        flap_temp = np.arccos(flap_temp) * 180 / np.pi
+        flap_temp = np.arccos(flap_cos) * 180 / np.pi
     else:
-        flap_temp = -np.arccos(flap_temp) * 180 / np.pi
+        flap_temp = -np.arccos(flap_cos) * 180 / np.pi
 
     flapping_angle.append(-flap_temp)
 
